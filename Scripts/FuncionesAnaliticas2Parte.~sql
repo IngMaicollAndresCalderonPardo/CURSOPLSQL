@@ -1,0 +1,10 @@
+---CAPACIDADES ANALITICAS 
+
+SELECT cedula, 
+nro_factura, 
+fecha_factura, 
+valor
+FROM factura
+GROUP BY cedula, 
+nro_factura, 
+fecha_factura;

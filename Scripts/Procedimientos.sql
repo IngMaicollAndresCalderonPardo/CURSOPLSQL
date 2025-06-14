@@ -1,0 +1,138 @@
+ /* PROCEDIMIENTOS 
+ Un procedimiento almacenado es un bloque de código PL/SQL nominado, almacenado en la base de datos 
+ y que se puede ejecutar desde aplicaciones u otros procedimientos almacenados. 
+ En un bloque PL/SQL, basta con hacer referencia al procedimiento por su nombre para ejecutarlo. 
+ En SQL*Plus, se puede utilizar la instrucción EXECUTE.*/
+ 
+
+--EJEMPLOS 
+
+--Procedimiento para eliminar un artículo:
+
+create or replace procedure elim_art (numero in char) is
+begin
+delete from lineasped where refart=numero;
+delete from articulos where refart=numero;
+end;
+
+ CREATE OR REPLACE PROCEDURE nombre (parms) IS
+-- Declaracion de Variables
+BEGIN
+  -- cuerpo del programa
+END;
+
+
+/*Los procedimientos en su gran mayoría deberían tener un parámetro de salida que indique el resulta
+La asignación de las variables a los parámetros debería ser por medio de =>
+Los nombres deben ser para lo que se utilizan y no nombres cifrados de difícil mantenimiento
+El sistema debe manejar un procedure de errores único en el sistema y todos deben apuntar a este
+Se deben manejar las excepciones */
+
+
+--EJEMPLO 
+--Dada una cédula, traer el Salario
+
+CREATE OR REPLACE miSalario(id NUMBER)
+	RETURN NUMBER IS
+x empleado.sueldo%TYPE;
+BEGIN
+	SELECT sueldo
+		INTO x
+		FROM empleado
+		WHERE cedula = id;
+	RETURN x;
+END;
+
+
+
+
+--EJERCICIOS-- 
+/*Almacenar en un vector los numeros del 1 al 12 mutiplicados x10  e imprimir el vector*/
+
+DECLARE
+TYPE VECTOR_NUMEROS IS TABLE OF NUMBER 
+  INDEX BY BINARY_INTEGER;
+  
+  NUMEROS VECTOR_NUMEROS;
+BEGIN
+  FOR i IN 1 .. 12 LOOP
+     NUMEROS (i) := i * 10;
+   END LOOP;
+   --
+   DBMS_OUTPUT.put_line ('TABLA DE MULTIPLICAR');
+   DBMS_OUTPUT.put_line ('--------------------');
+   --
+   FOR i IN 1 .. 12 LOOP 
+      DBMS_OUTPUT.put_line ('NUMERO '  || NUMEROS (i));
+   END LOOP;
+END;    
+
+----------------------------------------------------
+
+/* Almacenar en un vector la cedula y el nombre de los  clientes  e imprimir el vector */ 
+
+DECLARE
+   TYPE REG_CLIENTE IS RECORD (
+      CEDULA   CLIENTE.CEDULA%TYPE,
+      NOMBRE   CLIENTE.NOMBRE%TYPE
+   );
+
+   TYPE VEC_CLIENTE IS TABLE OF REG_CLIENTE
+      INDEX BY BINARY_INTEGER;
+
+   CURSOR C_CLIENTE IS
+      SELECT CEDULA, NOMBRE  FROM CLIENTE ;
+
+   V_CLIENTE   VEC_CLIENTE;
+   j           NUMBER;
+   
+BEGIN
+   
+   j:=0;
+   
+   FOR i IN C_CLIENTE LOOP
+      V_CLIENTE (j).CEDULA := i.CEDULA;
+      V_CLIENTE (j).NOMBRE := i.NOMBRE;
+      j:=j+1;
+   END LOOP;
+   ---
+   DBMS_OUTPUT.put_line ('TABLA DE CLIENTE');
+   DBMS_OUTPUT.put_line ('----------------');
+   --
+   FOR j IN V_CLIENTE.FIRST .. V_CLIENTE.LAST LOOP
+      DBMS_OUTPUT.put_line (LPAD(V_CLIENTE (j).CEDULA,2,'0')|| ' - '||V_CLIENTE (j).NOMBRE);
+   END LOOP;
+END;
+-----------------------------------------------------------------------------------------------
+/*Almacenar en un vector los nombre de los clients e indezarlos por la cedula  e imprimir el vector */ 
+
+DECLARE
+   TYPE REG_CLIENTE IS RECORD (
+        NOMBRE   CLIENTE.NOMBRE%TYPE
+   );
+
+   TYPE VEC_CLIENTE IS TABLE OF REG_CLIENTE
+      INDEX BY BINARY_INTEGER;
+
+   CURSOR C_CLIENTE IS
+      SELECT NOMBRE  FROM CLIENTE ORDER BY CEDULA ;
+
+   V_CLIENTE   VEC_CLIENTE;
+   j           NUMBER;
+   
+BEGIN
+   
+   j:=0;
+   
+   FOR i IN C_CLIENTE LOOP
+      V_CLIENTE (j).NOMBRE := i.NOMBRE;
+      j:=j+1;
+   END LOOP;
+   ---
+   DBMS_OUTPUT.put_line ('TABLA DE CLIENTE INDEXADA POR CEDULA');
+   DBMS_OUTPUT.put_line ('------------------------------------');
+   --
+   FOR j IN V_CLIENTE.FIRST .. V_CLIENTE.LAST LOOP
+      DBMS_OUTPUT.put_line (V_CLIENTE (j).NOMBRE);
+   END LOOP;
+END;

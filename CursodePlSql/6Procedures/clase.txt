@@ -1,0 +1,25 @@
+pl que imprima la cantidad dias martes y domingos de un mes
+
+generar un semaforo segun el valor 1->verde,2->amarillo,3->rojo
+
+extraer los valores de la tarifa nueva y la anterior cadena
+
+Viernes 19 de Agosto de 2011
+
+1)ejerccion de vectores
+
+2)Eliminar con un algoritmo valores repetidos en  la tabla facturas.
+
+3)laboratoria 2,3,4
+
+delete tabla from (select fila = row_number() over(partition by tu_campo1, [tu_campo2] order by algun_campo) from tu_tabla) as tabla where fila <> 1 
+
+SELECT DISTINCT Lista de Campos a Visualizar FROM Tabla
+WHERE CampoDeBusqueda In
+(SELECT CampoDeBusqueda FROM Tabla As psudónimo
+GROUP BY CampoDeBusqueda HAVING Count(*) > 1 )
+ORDER BY CampoDeBusqueda 
+
+delete clientes from (select distinct cedula from clientes where cedula in(select cedula from clientes group by cedula having count(*) > 1)  where rownum
+
+delete from factura where rowid not in(select min(rowid) from FACTURA group by NRO_FACTURA )

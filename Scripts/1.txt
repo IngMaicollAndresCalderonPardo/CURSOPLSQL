@@ -1,0 +1,73 @@
+USABILIDAD CONSIDERACIONES AL DISEÑO 
+
+ACLARACIONES 
+
+La usabilidad no es un check
+la verdadera usabilidad la indica el usuario 
+
+CONSIDERACIONES 
+
+INTERFACES   	
+identidad visual que se pretende llevar al usuario, los colores
+
+diseño: estetica y minimalista 
+diseños simples responsive 
+aplicacion sea adaptable - movil o desk 
+
+diseñar en pantalla pequeña y luego llevar a pantalla normal 
+
+imagenes no sobrecargar la pgn y que el usuario pierda el enfoque 
+
+CONTENIDO 
+Respetar Jerarquias -estilos - tamaños - hipervinculos - colores
+
+textos legibles - iconos que lleven al usuario a saber de lo que se habla 
+hay que tener una buena tipografica, con nivel de brillo 
+
+usar espacion en blanco, ser especifico 
+
+DISEÑO EN MOVIL - usar gestos - tocar - arrastrar 
+
+INTERFACES MOVILES - Que el espacio sea el indicado - zonaz calientes donde normalmente utilizamos los dedos 
+
+MENSAJE DE ERROR 
+que ha pasado + que ha causado el error + que puede hacer el usuario   para solucionar 
+
+SOLUCIONES SUBOPTIMAS 
+Hacer lo mejor posible - cancelar operaciones - deshacer cambios 
+
+SITUACION ACTUAL DEL SISTEMA
+LOGIN - registrar y no pasa nada - hay que proveer una informacion de 
+lo que esta haciendo 
+
+3 segundos esta bien sino agregar el cargando informaicon 
+
+FORMULARIO 
+Hacer activos los campos que se requiere que el cliente llene 
+deben mostrar etiquetas que guien al usuario 
+Informarle si hay errores ( letras rojas ) 
+buena practica validar bien los campos - ser claro csi hay alguen error en el nombre si ya existe - o exceso de caracteres - formato equivocado
+
+PRODUCTIVIDAD
+
+Que el usuario ingrese y vea que es lo que necesita 
+
+PAGINAS EN CONSTRUCCION
+
+ATAJOS DE TECLADO 
+
+BUSQUEDAS- FILTROS RELEVANTES A LA VISTA 
+
+RENDIMIENTO: Velocidad de la pgn rapida. Optimizacion de app 
+Recursos mucha bateria 
+
+AYUDA - Dudas - ejemplos 
+
+3176647057
+harold.bastidasO@ucc.edu.co
+
+
+
+
+
+

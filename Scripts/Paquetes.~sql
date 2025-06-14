@@ -1,0 +1,72 @@
+-- PAQUETES ---------------
+/*
+
+
+*/
+
+--Packages--  SINTAXIS 
+
+CREATE OR REPLACE PACKAGE nombre IS
+  -- variables publicas
+  -- declaracion de subprogramas
+END nombre;
+
+CREATE OR REPLACE PACKAGE LiqNomina IS
+  pCedula empleado.cedula%TYPE;
+
+  PROCEDURE seleccionar (pdpto IN NUMBER);
+  PROCEDURE liquidar (nit IN NUMBER);
+  FUNCTION valorNovedad (nit NUMBER, fecha)
+		RETURN NUMBER;
+END LiqNomina;
+
+/* 
+
+-UTILIZACION DEL PACKAGE 
+
+Liquidar(x); -- dentro del package
+liqNomina.liquidar(x);  -- desde una rutina ubicada fuera del package
+user.liqNomina.liquidar(x);  -- haciendo el llamado desde otro usuario distinto del propietario del package.
+
+
+-BORRADO DE PACKAGES 
+
+DROP PACKAGE liqNomina;
+DROP PACKAGE BODY liqNomina;
+
+-ESPECIFICACION
+Uso general
+En ella, solo incluir las rutinas de uso público
+Colocar variables en la specification si se requiere preservarlas
+Compilar la specification, requiere de la compilación del body
+
+-VENTAJAS 
+Encapsulamiento
+Facilita el desarrollo
+Persistencia en variables globales
+Mejora el rendimiento
+Una sola copia del código para todos los usuarios
+Dependencia entre objetos se simplifica
+Overloading
+
+
+*/
+
+--OVERLOADING
+--Un mismo package puede tener rutinas con el mismo nombre, diferenciadas por los parametros de entrada.
+
+CREATE OR REPLACE PACKAGE LiqNomina IS
+  PROCEDURE liquidar (nit IN NUMBER);
+  PROCEDURE liquidar (  nit IN NUMBER,
+          dpto IN NUMBER);
+  PROCEDURE liquidar (  nit IN NUMBER ,
+          dpto IN NUMBER,
+          saldo IN NUMBER);
+END LiqNomina;
+
+--UTILIZACION DE FUNCIONES 
+--Aplican las mismas restricciones que al llamado de funciones desde SQL.
+
+SELECT id, 
+		liqNomina.valorNovedad (id, hire_date) valor
+	FROM employees;

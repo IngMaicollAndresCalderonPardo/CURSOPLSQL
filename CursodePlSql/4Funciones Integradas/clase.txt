@@ -1,0 +1,7 @@
+pl que imprima la cantidad dias martes y domingos de un mes
+
+generar un semaforo segun el valor 1->verde,2->amarillo,3->rojo
+
+extraer los valores de la tarifa nueva y la anterior cadena
+
+Eliminar con un algoritmo valors repetidos en  la tabla facturas.

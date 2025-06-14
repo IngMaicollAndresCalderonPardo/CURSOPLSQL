@@ -1,0 +1,401 @@
+--SCRIPT DE BORRADO DE TABLAS
+
+DROP TABLE factura;
+
+DROP TABLE cliente;
+
+DROP TABLE ciudad;
+
+DROP TABLE departamento;
+
+--SCRIPT DE CREACION DE TABLAS
+
+CREATE TABLE departamento
+(
+cod_departamento VARCHAR2(3) NOT NULL,
+nom_departamento VARCHAR2(60) NOT NULL
+);
+
+SELECT*FROM departamento
+
+
+-- Constraints for DEPARTAMENTO
+ALTER TABLE departamento 
+ADD CONSTRAINT pk_depto PRIMARY KEY(cod_departamento) 
+USING INDEX;
+
+ALTER TABLE departamento  ADD (
+    usuario_creacion   VARCHAR2(10) NOT NULL,
+    fecha_creacion     DATE NOT NULL,
+    usuario_modificacion   VARCHAR2(10) NOT NULL,
+    fecha_modificacion DATE NOT NULL
+ );
+
+
+COMMENT ON COLUMN departamento.fecha_creacion IS 'Fecha creacion del registro';
+COMMENT ON COLUMN departamento.fecha_modificacion IS 'Fecha ultima modificacion';
+COMMENT ON COLUMN departamento.usuario_creacion IS 'Usuario creacion del registro';
+COMMENT ON COLUMN departamento.usuario_modificacion IS 'Usuario ultima modificacion';
+
+
+--SCRIPT DE CREACION DE TABLA CIUDAD
+CREATE TABLE ciudad
+(
+cod_ciudad NUMBER(5,0) NOT NULL,                    
+cod_departamento VARCHAR2(3) NOT NULL,         
+nom_ciudad VARCHAR2(60) NOT NULL                  
+); 
+
+SELECT*FROM ciudad
+-- Constraints for CIUDAD
+
+ALTER TABLE ciudad
+ADD CONSTRAINT pk_ciudad PRIMARY KEY (cod_ciudad)
+USING INDEX;
+
+-- Foreign Key CIUDAD
+ALTER TABLE ciudad
+ADD CONSTRAINT fk_depto FOREIGN KEY (cod_departamento)
+REFERENCES departamento (cod_departamento);
+
+ALTER TABLE ciudad  ADD (
+    usuario_creacion   VARCHAR2(10) NOT NULL,
+    fecha_creacion     DATE NOT NULL,
+    usuario_modificacion   VARCHAR2(10) NOT NULL,
+    fecha_modificacion DATE NOT NULL
+ );
+
+COMMENT ON COLUMN ciudad.fecha_creacion IS 'Fecha creacion del registro';
+COMMENT ON COLUMN ciudad.fecha_modificacion IS 'Fecha ultima modificacion';
+COMMENT ON COLUMN ciudad.usuario_creacion IS 'Usuario creacion del registro';
+COMMENT ON COLUMN ciudad.usuario_modificacion IS 'Usuario ultima modificacion';
+
+--SCRIPT DE CREACION DE TABLA CLIENTE
+CREATE TABLE cliente
+(
+cedula NUMBER(15,0) NOT NULL,
+nombre  VARCHAR2(60) NOT NULL,                       
+telefono  VARCHAR2(20) NOT NULL,                     
+cod_ciudad  NUMBER(5,0) NOT NULL,                   
+estado_cliente  VARCHAR2(1) NOT NULL            
+);
+
+SELECT * FROM CLIENTE
+
+-- Constraints for CLIENTE
+
+ALTER TABLE cliente
+ADD CONSTRAINT pk_cliente PRIMARY KEY (cedula)
+USING INDEX;
+
+
+-- Foreign Key
+ALTER TABLE cliente
+ADD CONSTRAINT fk_ciudad FOREIGN KEY (cod_ciudad)
+REFERENCES ciudad (cod_ciudad);  
+
+ALTER TABLE cliente  ADD (
+    usuario_creacion   VARCHAR2(10) NOT NULL,
+    fecha_creacion     DATE NOT NULL,
+    usuario_modificacion   VARCHAR2(10) NOT NULL,
+    fecha_modificacion DATE NOT NULL
+ );
+ 
+COMMENT ON COLUMN cliente.fecha_creacion IS 'Fecha creacion del registro';
+COMMENT ON COLUMN cliente.fecha_modificacion IS 'Fecha ultima modificacion';
+COMMENT ON COLUMN cliente.usuario_creacion IS 'Usuario creacion del registro';
+COMMENT ON COLUMN cliente.usuario_modificacion IS 'Usuario ultima modificacion';
+
+--SCRIPT DE CREACION DE TABLA FACTURA
+
+CREATE TABLE factura
+(
+cedula NUMBER(15,0) NOT NULL,                         
+nro_factura NUMBER(6,0) NOT NULL                  ,
+fecha_factura DATE NOT NULL,               
+valor NUMBER(12,2) NOT NULL                       
+);
+
+SELECT * FROM FACTURA
+SELECT * FROM DEPARTAMENTO
+SELECT * FROM CLIENTE
+SELECT * FROM CIUDAD
+
+-- Constraints for FACTURA
+ALTER TABLE factura
+ADD CONSTRAINT pk_factura PRIMARY KEY (nro_factura)
+USING INDEX;
+
+-- Foreign Key
+ALTER TABLE factura
+ADD CONSTRAINT fk_cedula FOREIGN KEY (cedula)
+REFERENCES cliente (cedula);
+
+ALTER TABLE factura  ADD (
+    usuario_creacion   VARCHAR2(10) NOT NULL,
+    fecha_creacion     DATE NOT NULL,
+    usuario_modificacion   VARCHAR2(10) NOT NULL,
+    fecha_modificacion DATE NOT NULL
+ );
+ 
+COMMENT ON COLUMN factura.fecha_creacion IS 'Fecha creacion del registro';
+COMMENT ON COLUMN factura.fecha_modificacion IS 'Fecha ultima modificacion';
+COMMENT ON COLUMN factura.usuario_creacion IS 'Usuario creacion del registro';
+COMMENT ON COLUMN factura.usuario_modificacion IS 'Usuario ultima modificacion';
+
+
+--CREAR TRIGGERS
+
+CREATE OR REPLACE TRIGGER tr_iu_factura
+   BEFORE INSERT OR UPDATE
+   ON factura
+   REFERENCING NEW AS NEW OLD AS OLD
+   FOR EACH ROW
+BEGIN
+   IF INSERTING THEN
+      :NEW.usuario_creacion := USER;
+      :NEW.fecha_creacion := DATE;
+   END IF;
+   :NEW.usuario_modificacion := USER;
+   :NEW.fecha_modificacion := DATE;
+END;
+
+
+CREATE OR REPLACE TRIGGER tr_iu_cliente
+   BEFORE INSERT OR UPDATE
+   ON cliente
+   REFERENCING NEW AS NEW OLD AS OLD
+   FOR EACH ROW
+BEGIN
+   IF INSERTING THEN
+      :NEW.usuario_creacion := USER;
+      :NEW.fecha_creacion := SYSDATE;
+   END IF;
+ 
+   :NEW.usuario_modificacion := USER;
+   :NEW.fecha_modificacion := SYSDATE;
+END;
+
+
+
+CREATE OR REPLACE TRIGGER tr_iu_departamento
+   BEFORE INSERT OR UPDATE
+   ON departamento
+   REFERENCING NEW AS NEW OLD AS OLD
+   FOR EACH ROW
+BEGIN
+   IF INSERTING THEN
+      :NEW.usuario_creacion := USER;
+      :NEW.fecha_creacion := SYSDATE;
+   END IF;
+ 
+      :NEW.usuario_modificacion := USER;
+   :NEW.fecha_modificacion := SYSDATE;
+
+END;
+
+
+
+CREATE OR REPLACE TRIGGER tr_iu_ciudad
+   BEFORE INSERT OR UPDATE
+   ON ciudad
+   REFERENCING NEW AS NEW OLD AS OLD
+   FOR EACH ROW
+BEGIN
+   IF INSERTING THEN
+      :NEW.usuario_creacion := USER;
+      :NEW.fecha_creacion := SYSDATE;
+   END IF;
+ 
+      :NEW.usuario_modificacion := USER;
+   :NEW.fecha_modificacion := SYSDATE;
+
+END;
+
+--SCRIPT DE POBLADO DE DATOS
+
+SELECT * FROM factura
+SELECT * FROM departamento
+SELECT * FROM ciudad
+SELECT * FROM cliente
+
+
+
+
+INSERT INTO departamento (cod_departamento,nom_departamento,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES ('1', 'SANTANDER','USUARIO','04/oct/2005','USUARIO','04/oct/2005');
+
+INSERT INTO departamento (cod_departamento,nom_departamento,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion) 
+     VALUES ('2', 'CUNDINAMARCA','USUARIO','04/oct/2005','USUARIO','07/oct/2021');
+
+INSERT INTO departamento (cod_departamento,nom_departamento,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion) 
+     VALUES ('3', 'BOYACA','USUARIO','04/oct/2005','USUARIO','07/oct/2021');
+
+INSERT INTO departamento (cod_departamento,nom_departamento,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion) 
+     VALUES ('4', 'ANTIOQUIA','USUARIO','04/oct/2005','USUARIO','07/oct/2021');
+
+INSERT INTO departamento (cod_departamento,nom_departamento,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion) 
+     VALUES ('5', 'VALLE','USUARIO','04/oct/2005','USUARIO','07/oct/2021');
+
+INSERT INTO ciudad (cod_ciudad,cod_departamento, nom_ciudad,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (10, '1', 'BUCARAMANGA','USUARIO','04/may/2005','USUARIO','08/oct/2021');
+
+INSERT INTO ciudad (cod_ciudad,cod_departamento, nom_ciudad,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (20, '2', 'USME','USUARIO','04/may/2005','USUARIO','08/oct/2021');
+
+INSERT INTO ciudad (cod_ciudad,cod_departamento, nom_ciudad,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (30, '3', 'TUNJA','USUARIO','04/may/2005','USUARIO','08/oct/2021');
+
+INSERT INTO ciudad (cod_ciudad,cod_departamento, nom_ciudad,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (40, '4', 'MEDELLIN','USUARIO','04/may/2005','USUARIO','08/oct/2021');
+
+INSERT INTO ciudad (cod_ciudad,cod_departamento, nom_ciudad,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (50, '5', 'CALI','USUARIO','04/may/2005','USUARIO','08/oct/2021');
+
+
+INSERT INTO cliente (cedula, nombre, telefono, cod_ciudad, estado_cliente,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (11, 'JAIRO', '6449704', 10, 'A','USUARIO','06/may/2005','USUARIO','09/oct/2021');
+
+INSERT INTO cliente (cedula, nombre, telefono, cod_ciudad, estado_cliente,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (22, 'URIEL', '6487954', 20, 'A','USUARIO','06/may/2005','USUARIO','09/oct/2021');
+
+INSERT INTO cliente (cedula, nombre, telefono, cod_ciudad, estado_cliente,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (33, 'SERGIO', '6459745', 30, 'I','USUARIO','06/may/2005','USUARIO','09/oct/2021');
+
+INSERT INTO cliente (cedula, nombre, telefono, cod_ciudad, estado_cliente,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (1, 'WILSON', '6449704', 10, 'A','USUARIO','06/may/2005','USUARIO','09/oct/2021');
+
+INSERT INTO cliente (cedula, nombre, telefono, cod_ciudad, estado_cliente,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (2, 'JAVIER', '6487954', 10, 'A','USUARIO','06/may/2005','USUARIO','09/oct/2021');
+
+INSERT INTO cliente (cedula, nombre, telefono, cod_ciudad, estado_cliente,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (3, 'SEBASTIAN', '6459745', 30, 'I','USUARIO','06/may/2005','USUARIO','09/oct/2021');
+
+
+INSERT INTO cliente (cedula, nombre, telefono, cod_ciudad, estado_cliente,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (44, 'CLAUDIA', '6457898', 40, 'A','USUARIO','06/may/2005','USUARIO','09/oct/2021');
+
+INSERT INTO cliente (cedula, nombre, telefono, cod_ciudad, estado_cliente,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (55, 'HUMBERTO', '6547821', 50, 'I','USUARIO','06/may/2005','USUARIO','09/oct/2021');
+
+INSERT INTO cliente (cedula, nombre, telefono, cod_ciudad, estado_cliente,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (66, 'PEDRO', '6587458', 10, 'A','USUARIO','06/may/2005','USUARIO','09/oct/2021');
+
+
+INSERT INTO factura (cedula, nro_factura, fecha_factura, valor,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (11, 100, '31/mar/2006', 120000,'USUARIO','07/may/2005','USUARIO','10/oct/2021');
+
+INSERT INTO factura (cedula, nro_factura, fecha_factura, valor,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (22, 200, '10/may/2005', 34000,'USUARIO','07/may/2005','USUARIO','10/oct/2021');
+
+INSERT INTO factura (cedula, nro_factura, fecha_factura, valor,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (33, 300, '08/oct/2006', 350000,'USUARIO','07/may/2005','USUARIO','10/oct/2021');
+
+INSERT INTO factura (cedula, nro_factura, fecha_factura, valor,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (44, 400, '10/oct/2006', 550000,'USUARIO','07/may/2005','USUARIO','10/oct/2021');
+
+INSERT INTO factura (cedula, nro_factura, fecha_factura, valor,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (55, 500, '01/feb/2006', 600000,'USUARIO','07/may/2005','USUARIO','10/oct/2021');
+
+INSERT INTO factura (cedula, nro_factura, fecha_factura, valor,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (66, 600, '10/feb/2006', 1500000,'USUARIO','07/may/2005','USUARIO','10/oct/2021');
+
+INSERT INTO factura (cedula, nro_factura, fecha_factura, valor,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (1, 501, '04/oct/2005', 15000,'USUARIO','07/may/2005','USUARIO','10/oct/2021');
+
+
+INSERT INTO factura (cedula, nro_factura, fecha_factura, valor,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (44, 700, '10/feb/2005', 50000,'USUARIO','07/may/2005','USUARIO','10/oct/2021');
+
+INSERT INTO factura (cedula, nro_factura, fecha_factura, valor,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (55, 800, '01/feb/2005', 60000,'USUARIO','07/may/2005','USUARIO','10/oct/2021');
+
+INSERT INTO factura (cedula, nro_factura, fecha_factura, valor,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (66, 900, '10/ene/2006', 70000);
+
+INSERT INTO factura (cedula, nro_factura, fecha_factura, valor,usuario_creacion,fecha_creacion,usuario_modificacion,fecha_modificacion)
+     VALUES (11, 502, '04/oct/2005', 90000,'USUARIO','07/may/2005','USUARIO','10/oct/2021');
+
+--TALLER 
+
+--1 PUNTO 
+SELECT * FROM CLIENTE
+SELECT   nombre, AVG (valor) promedio 
+    FROM factura f, cliente c
+   WHERE f.cedula = c.cedula
+     AND TO_CHAR (f.fecha_factura, 'yyyy') = '2006'
+     AND c.cedula NOT IN (SELECT cedula
+                            FROM factura
+                           WHERE TO_CHAR (f.fecha_factura, 'yyyy') = '2005')
+GROUP BY nombre;
+
+--2 PUNTO
+
+Select FACTURA.*,
+       FACTURA.CEDULA               As CEDULA1,
+       FACTURA.NRO_FACTURA          As NRO_FACTURA1,
+       FACTURA.VALOR                As VALOR1,
+       FACTURA.FECHA_FACTURA        As FECHA_FACTURA1,
+       FACTURA.USUARIO_CREACION     As USUARIO_CREACION1,
+       FACTURA.FECHA_CREACION       As FECHA_CREACION1,
+       FACTURA.USUARIO_MODIFICACION As USUARIO_MODIFICACION1,
+       FACTURA.FECHA_MODIFICACION   As FECHA_MODIFICACION1
+  From FACTURA
+  
+  
+SELECT SUM (valor_mes), SUM (TRUNC (valor_mes / total * 100, 1)) por
+  FROM (SELECT   2006 ano, TO_CHAR (f.fecha_factura, 'mm') mes,
+                 SUM (valor) valor_mes
+            FROM factura f
+           WHERE TO_CHAR (f.fecha_factura, 'yyyy') = '2006'
+             AND TO_CHAR (f.fecha_factura, 'mm') != '02'
+        GROUP BY TO_CHAR (f.fecha_factura, 'mm')) m,
+       (SELECT 2006 ano, SUM (valor) total
+          FROM factura f
+         WHERE TO_CHAR (f.fecha_factura, 'yyyy') = '2006') t
+ WHERE m.ano = t.ano;
+
+--3 PUNTO
+
+SELECT *
+  FROM (SELECT   c.nombre, SUM (valor) valor
+            FROM factura f, cliente c, ciudad i, departamento d
+           WHERE f.cedula = c.cedula
+             AND c.cod_ciudad = i.cod_ciudad
+             AND i.cod_departamento = d.cod_departamento
+             AND d.nom_departamento = 'SANTANDER'
+             AND TO_CHAR (f.fecha_factura, 'yyyy') IN ('2005', '2006')
+             AND TO_CHAR (f.fecha_factura, 'mm') IN ('01', '02', '03')
+        GROUP BY c.nombre
+        ORDER BY 2 DESC)
+ WHERE ROWNUM = 1;
+
+
+--  PUNTO 4 
+
+SELECT nom_ciudad, t.total, valor_mes, TRUNC (valor_mes / total * 100, 1) por
+  FROM (SELECT   1 ano, i.nom_ciudad, SUM (valor) valor_mes
+            FROM factura f, cliente c, ciudad i
+           WHERE f.cedula = c.cedula
+             AND c.cod_ciudad = i.cod_ciudad
+             AND c.estado_cliente = 'A'
+             AND TO_CHAR (f.fecha_factura, 'yyyy') IN ('2005', '2006')
+        GROUP BY i.nom_ciudad) m,
+       ((SELECT 1 ano, SUM (valor) total
+           FROM factura f, cliente c, ciudad i
+          WHERE f.cedula = c.cedula
+            AND c.cod_ciudad = i.cod_ciudad
+            AND c.estado_cliente = 'A'
+            AND TO_CHAR (f.fecha_factura, 'yyyy') IN ('2005', '2006'))) t
+ WHERE m.ano = t.ano;          
+
+--Opcion 2)
+SELECT   i.nom_ciudad, SUM (valor) valor_mes,
+         TRUNC (ratio_to_report (SUM (valor)) OVER () * 100, 1) porcentaje
+    FROM factura f, cliente c, ciudad i
+   WHERE f.cedula = c.cedula
+     AND c.cod_ciudad = i.cod_ciudad
+     AND c.estado_cliente = 'A'
+     AND TO_CHAR (f.fecha_factura, 'yyyy') IN ('2005', '2006')
+GROUP BY i.nom_ciudad; 
+
